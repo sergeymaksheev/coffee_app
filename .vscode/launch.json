@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Module",
+            "name": "App",
             "type": "python",
             "request": "launch",
-            "module": "coffee_app",
+            "module": "app.coffee_app",
             "justMyCode": true
         }
     ]
