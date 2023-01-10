@@ -53,8 +53,4 @@ class CoffeeMachines(EnumAsList, str, Enum):
 
 
 
-#print(CoffeeTypes.as_list())
-
-
-
 

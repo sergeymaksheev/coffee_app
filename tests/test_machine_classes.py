@@ -4,8 +4,29 @@ import pytest
 from pytest_mock import MockerFixture
 from unittest.mock import MagicMock, call
 from app.classes.data_classes import CoffeeDrink
-from app.classes.machine_classes import AutoCoffeeMachine, CarobCoffeeMachine, CapsuleCoffeeMachine
+from app.classes.machine_classes import AutoCoffeeMachine, CarobCoffeeMachine, CapsuleCoffeeMachine, Machine
 
+
+@pytest.fixture(name='count_mock')
+def count_fixture(mocker:MockerFixture)->MagicMock:
+    mock = MagicMock(return_value=[1])
+    mocker.patch('app.classes.machine_classes.itertools.count', mock)
+    return mock
+
+
+@pytest.fixture(name='print_mock')
+def print_fixture(mocker:MockerFixture)->MagicMock:
+    mock = MagicMock()
+    mocker.patch('app.classes.machine_classes.print', mock)
+    return mock
+
+
+@pytest.fixture(name='input_mock')
+def input_fixture(mocker:MockerFixture)->MagicMock:
+    mock = MagicMock()
+    mocker.patch('app.classes.machine_classes.input', mock)
+    return mock
+    
 
 @pytest.fixture(name='ask_user_for_source_mock')
 def ask_user_for_source_fixture(mocker: MockerFixture)->MagicMock:
@@ -28,7 +49,8 @@ def add_source_capsule_fixture(mocker: MockerFixture)->MagicMock:
     return mock
 
 
-class MachineClassMixin:      
+class MachineClassMixin:  
+    
 
     @pytest.mark.parametrize("coffee_variant", [('1'), ('2'), ('3'),('4'),])
     def test_brew_enough_sources(
@@ -108,6 +130,61 @@ class TestAutoMachine(MachineClassMixin):
         mocker.patch('app.classes.machine_classes.AutoCoffeeMachine.start_brewing', mock)
         return mock
 
+    def teardown(self):
+        self.TEST_CLASS.COFFEE_VALUE = 0
+        self.TEST_CLASS.WATER_VALUE = 0
+        self.TEST_CLASS.MILK_VALUE = 0
+
+
+    @pytest.mark.parametrize("source, need_value, source_for_add", [(1, 10, '10'), (2, 10, '500'), (3, 10, '100'),])
+    def test_ask_user_for_source_correct_value(
+        self,
+        source: Literal[1,2,3],
+        need_value: int,
+        count_mock:MagicMock,
+        input_mock:MagicMock,
+        source_for_add:str
+    )->None:
+        input_mock.return_value = source_for_add
+        result = self.TEST_CLASS.ask_user_for_source(source=source, need_value=need_value)
+        count_mock.assert_called_once()
+        assert result == float(source_for_add)
+
+
+    @pytest.mark.parametrize("source, need_value, source_for_add", [(1, 10, '2000'), (2, 10, '9'), (3, 10, 'string'),])
+    def test_ask_user_for_source_wrong_value(
+        self,
+        source: Literal[1,2,3],
+        need_value: int,
+        count_mock:MagicMock,
+        input_mock:MagicMock,
+        source_for_add:str,
+        print_mock:MagicMock
+    )->None:
+        input_mock.return_value = source_for_add
+        result = self.TEST_CLASS.ask_user_for_source(source=source, need_value=need_value)
+        count_mock.assert_called_once()
+        print_mock.assert_called()
+        print_mock.call_count == 5
+        assert result is None
+
+
+    @pytest.mark.parametrize("source, source_value, expected", [(1, 50.0, 50.0), (2, 10.0, 10.0), (3, 10.0, 10.0),(1, -10.0, 0.0),])
+    def test_add_source(
+        self,
+        source: Literal[1,2,3],
+        source_value:float,
+        expected: float,
+    )->None:
+        self.TEST_CLASS.add_source(source=source, source_value=source_value)
+
+        if source == 1:
+            assert self.TEST_CLASS.COFFEE_VALUE == expected
+        elif source == 2:
+            assert self.TEST_CLASS.WATER_VALUE == expected
+        elif source == 3:
+            assert self.TEST_CLASS.MILK_VALUE == expected
+
 
     TEST_CLASS = AutoCoffeeMachine(drink_class=CoffeeDrink)
 
@@ -124,6 +201,29 @@ class TestCarobMachine(MachineClassMixin):
         mock = MagicMock()
         mocker.patch('app.classes.machine_classes.CarobCoffeeMachine.start_brewing', mock)
         return mock
+
+
+    def teardown(self):
+        self.TEST_CLASS.COFFEE_VALUE = 0
+        self.TEST_CLASS.WATER_VALUE = 0
+        self.TEST_CLASS.MILK_VALUE = 0
+        
+
+    @pytest.mark.parametrize("source, source_value, expected", [(1, 50.0, 50.0), (2, 10.0, 10.0), (3, 10.0, 10.0),(1, -10.0, 0.0),])
+    def test_add_source(
+        self,
+        source: Literal[1,2,3],
+        source_value:float,
+        expected: float,
+    )->None:
+        self.TEST_CLASS.add_source(source=source, source_value=source_value)
+
+        if source == 1:
+            assert self.TEST_CLASS.COFFEE_VALUE == expected
+        elif source == 2:
+            assert self.TEST_CLASS.WATER_VALUE == expected
+        elif source == 3:
+            assert self.TEST_CLASS.MILK_VALUE == expected
 
 
 
@@ -144,5 +244,21 @@ class TestCapsuleMachine(MachineClassMixin):
         return mock
 
 
+    def teardown(self):
+        self.TEST_CLASS.WATER_VALUE = 0
+        
+
+    @pytest.mark.parametrize("source, source_value, expected", [(1, 50.0, 50.0), (1, -10.0, 0.0),])
+    def test_add_source(
+        self,
+        source: Literal[1,2,3],
+        source_value:float,
+        expected: float,
+    )->None:
+        self.TEST_CLASS.add_source(source=source, source_value=source_value)
+
+        
+        assert self.TEST_CLASS.WATER_VALUE == expected
+        
 
     TEST_CLASS = CapsuleCoffeeMachine(drink_class=CoffeeDrink)

@@ -15,14 +15,16 @@ class Machine:
                 2 - WATER
                 3 - MILK
             """
-            if source == 1:
-                self.COFFEE_VALUE += source_value
-            elif source == 2:
-                self.WATER_VALUE += source_value
-            elif source == 3:
-                self.MILK_VALUE += source_value
+            if source_value >= 0:
+                if source == 1:
+                    self.COFFEE_VALUE += source_value
+                elif source == 2:
+                    self.WATER_VALUE += source_value
+                elif source == 3:
+                    self.MILK_VALUE += source_value
     
-    def ask_user_for_source(self, source: Literal[1,2,3], need_value: int) -> None:
+
+    def ask_user_for_source(self, source: Literal[1,2,3], need_value: float) -> float | None:
         """Ask user for needed value of selected source."""
         print(self.source_names)
         current_source = self.source_names[source]
@@ -32,17 +34,18 @@ class Machine:
 
         for _ in itertools.count():
             source_for_add = input(f"Введите необходимое количество. Минимальное количество {need_value}\n")
-            if not source_for_add.isdigit() or int(source_for_add) < need_value:
-                print(f"Введено неверное значение ресурса: {current_source}")
-                continue
+            msg = f"Введено неверное значение ресурса: {current_source}"
             
-            source_for_add=int(source_for_add)
-            if source_for_add + self.current_sources[source] > self.max_sources[source]:
-                print(f"Введено слишком большое значeние для ресурса {current_source}")
-                continue
+            if source_for_add.isdigit():
+                source_for_add = float(source_for_add)
+                if source_for_add < need_value:
+                    msg = f"Введено недостаточно ресурса {current_source}"
+                elif source_for_add + self.current_sources[source] > self.max_sources[source]:
+                    msg = f"Введено слишком большое значeние для ресурса {current_source}"
+                else:
+                    return source_for_add
+            print(msg)
             
-            return source_for_add
-
     def brew(self, coffee_variant:str):
         """Brewing coffee."""
         drink: CoffeeDrink = self.DRINKS[coffee_variant]
@@ -256,8 +259,9 @@ class CapsuleCoffeeMachine(Machine):
             """Add selected source.
                 1 - WATER
             """
-            if source == 1:
-                self.WATER_VALUE += source_value
+            if source_value >= 0:
+                if source == 1:
+                    self.WATER_VALUE += source_value
 
     @property
     def current_sources(self)->dict[int: int]:
