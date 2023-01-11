@@ -252,33 +252,33 @@ class CapsuleCoffeeMachine(Machine):
     @property
     def source_names(self):
         return {
-            1: 'Вода',
+            2: 'Вода',
         }
 
     def add_source(self, source: Literal[1,2,3], source_value: int) -> None:
             """Add selected source.
-                1 - WATER
+                2 - WATER
             """
             if source_value >= 0:
-                if source == 1:
+                if source == 2:
                     self.WATER_VALUE += source_value
 
     @property
     def current_sources(self)->dict[int: int]:
         """Returns current values of source.
-            1 - WATER
+            2 - WATER
         """
         return {
-            1: self.WATER_VALUE
+            2: self.WATER_VALUE
         }
 
     @property
     def max_sources(self) -> dict[int: int]:
         """Returns max values of source.
-            1 - WATER
+            2 - WATER
         """
         return {
-            1: self.MAX_WATER
+            2: self.MAX_WATER
         }
 
 
@@ -287,7 +287,7 @@ class CapsuleCoffeeMachine(Machine):
         water_res = drink.water - self.WATER_VALUE
 
         return {
-            1: water_res
+            2: water_res
         }
     
     def start_brewing(self, coffee_variant: str, drink: CoffeeDrink):
