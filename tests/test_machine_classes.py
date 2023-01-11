@@ -118,6 +118,10 @@ class MachineClassMixin:
         
 
 class TestAutoMachine(MachineClassMixin):
+
+    TEST_CLASS = AutoCoffeeMachine(drink_class=CoffeeDrink)
+
+
     @pytest.fixture(name='validate_sources_mock')
     def validate_sources_fixture(self, mocker: MockerFixture)->MagicMock:
         mock = MagicMock()
@@ -134,9 +138,6 @@ class TestAutoMachine(MachineClassMixin):
         self.TEST_CLASS.COFFEE_VALUE = 0
         self.TEST_CLASS.WATER_VALUE = 0
         self.TEST_CLASS.MILK_VALUE = 0
-
-
-    TEST_CLASS = AutoCoffeeMachine(drink_class=CoffeeDrink)
 
 
     @pytest.mark.parametrize("source, source_value, expected", [(1, 50.0, 50.0), (2, 10.0, 10.0), (3, 10.0, 10.0),(1, -10.0, 0.0),])
@@ -188,6 +189,43 @@ class TestAutoMachine(MachineClassMixin):
         print_mock.call_count == 5
         assert result is None
 
+
+    def test_source_name(
+        self
+    )->None:
+        test_result = {
+            1: 'Кофе',
+            2: 'Вода',
+            3: 'Молоко'
+        }
+        assert test_result == self.TEST_CLASS.source_names
+
+
+    @pytest.mark.parametrize("coffee_variant, coffee_value, water_value, milk_value, expected_result", [
+        ('1', 0, 0, 0, {1:50, 2:50, 3:0}), 
+        ('1', 10, 10, 10, {1:40, 2:40, 3:-10}), 
+        ('2', 0, 0, 0, {1:50, 2:250, 3:0}),
+        ('2', 10, 10, 10, {1:40, 2:240, 3:-10}),
+        ('3', 0, 0, 0, {1:50, 2:100, 3:150}),
+        ('3', 10, 10, 10, {1:40, 2:90, 3:140}),
+        ('4', 0, 0, 0, {1:50, 2:50, 3:200}),
+        ('4', 10, 10, 10, {1:40, 2:40, 3:190}),
+    ])
+    def test_validate_sources(
+        self,
+        expected_result: dict[Literal[1,2,3], int],
+        coffee_variant: str,
+        coffee_value: int, 
+        water_value: int,
+        milk_value: int
+    )->None:
+        self.TEST_CLASS.COFFEE_VALUE = coffee_value
+        self.TEST_CLASS.WATER_VALUE = water_value
+        self.TEST_CLASS.MILK_VALUE = milk_value
+        drink = self.TEST_CLASS.DRINKS[coffee_variant]
+        test_result = self.TEST_CLASS.validate_sources(drink=drink)
+        assert test_result == expected_result
+        
 
 class TestCarobMachine(MachineClassMixin):
     @pytest.fixture(name='validate_sources_mock')
@@ -257,6 +295,40 @@ class TestCarobMachine(MachineClassMixin):
         assert result is None
 
 
+    def test_source_name(
+        self
+    )->None:
+        test_result = {
+            1: 'Кофе',
+            2: 'Вода',
+        }
+        assert test_result == self.TEST_CLASS.source_names
+
+
+    @pytest.mark.parametrize("coffee_variant, coffee_value, water_value, expected_result", [
+        ('1', 0, 0, {1:50, 2:100}),
+        ('1', 10, 10, {1:40, 2:90}), 
+        ('2', 0, 0, {1:50, 2:350}),
+        ('2', 10, 10, {1:40, 2:340}),
+        ('3', 0, 0, {1:50, 2:400}),
+        ('3', 10, 10, {1:40, 2:390}),
+        ('4', 0, 0, {1:50, 2:400}),
+        ('4', 10, 10, {1:40, 2:390}),
+    ])
+    def test_validate_sources(
+        self,
+        expected_result: dict[Literal[1,2,3], int],
+        coffee_variant: str,
+        coffee_value: int,
+        water_value: int
+    )->None:
+        self.TEST_CLASS.COFFEE_VALUE = coffee_value
+        self.TEST_CLASS.WATER_VALUE = water_value
+        drink = self.TEST_CLASS.DRINKS[coffee_variant]
+        test_result = self.TEST_CLASS.validate_sources(drink=drink)
+        assert test_result == expected_result
+
+
     TEST_CLASS = CarobCoffeeMachine(drink_class=CoffeeDrink)
 
 
@@ -321,5 +393,35 @@ class TestCapsuleMachine(MachineClassMixin):
         print_mock.call_count == 5
         assert result is None
         
+
+    def test_source_name(
+        self
+    )->None:
+        test_result = {
+            2: 'Вода',
+        }
+        assert test_result == self.TEST_CLASS.source_names
+
+
+    @pytest.mark.parametrize("coffee_variant, coffee_value, expected_result", [
+        ('1', 0, {2:50}),
+        ('1', 10, {2:40}),  
+        ('2', 0, {2:250}),
+        ('2', 10, {2:240}), 
+        ('3', 0, {2:250}),
+        ('3', 10, {2:240}), 
+        ('4', 0, {2:350}),
+        ('4', 10, {2:340}), 
+    ])
+    def test_validate_sources(
+        self,
+        expected_result: dict[Literal[1,2,3], int],
+        coffee_variant: str,
+        coffee_value: int
+    )->None:
+        self.TEST_CLASS.WATER_VALUE = coffee_value
+        drink = self.TEST_CLASS.DRINKS[coffee_variant]
+        test_result = self.TEST_CLASS.validate_sources(drink=drink)
+        assert test_result == expected_result
 
     TEST_CLASS = CapsuleCoffeeMachine(drink_class=CoffeeDrink)
