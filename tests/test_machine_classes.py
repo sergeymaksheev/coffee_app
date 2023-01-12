@@ -64,6 +64,8 @@ def add_source_capsule_fixture(mocker: MockerFixture) -> MagicMock:
 class MachineClassMixin:
     """Base test class for common class Macine"""
 
+    TEST_CLASS: AutoCoffeeMachine | CarobCoffeeMachine | CapsuleCoffeeMachine
+
     @pytest.mark.parametrize(
         "coffee_variant",
         [
@@ -180,7 +182,7 @@ class TestAutoMachine(MachineClassMixin):
         return mock
 
     def teardown(self):
-        """Clear values fot new test"""
+        """Clear values for new test"""
         self.TEST_CLASS.COFFEE_VALUE = 0
         self.TEST_CLASS.WATER_VALUE = 0
         self.TEST_CLASS.MILK_VALUE = 0
@@ -299,17 +301,20 @@ class TestCarobMachine(MachineClassMixin):
 
     @pytest.fixture(name="validate_sources_mock")
     def validate_sources_fixture(self, mocker: MockerFixture) -> MagicMock:
+        """Validate sources fixture"""
         mock = MagicMock()
         mocker.patch("app.classes.machine_classes.CarobCoffeeMachine.validate_sources", mock)
         return mock
 
     @pytest.fixture(name="start_brewing_mock")
     def start_brewing_fixture(self, mocker: MockerFixture) -> MagicMock:
+        """Start brewing fixture"""
         mock = MagicMock()
         mocker.patch("app.classes.machine_classes.CarobCoffeeMachine.start_brewing", mock)
         return mock
 
     def teardown(self):
+        """Clear values for new test"""
         self.TEST_CLASS.COFFEE_VALUE = 0
         self.TEST_CLASS.WATER_VALUE = 0
         self.TEST_CLASS.MILK_VALUE = 0
@@ -328,6 +333,7 @@ class TestCarobMachine(MachineClassMixin):
         source_value: float,
         expected: float,
     ) -> None:
+        """Test add source"""
         self.TEST_CLASS.add_source(source=source, source_value=source_value)
 
         if source == 1:
@@ -351,6 +357,7 @@ class TestCarobMachine(MachineClassMixin):
         input_mock: MagicMock,
         source_for_add: str,
     ) -> None:
+        """Test ask user for source correct value"""
         input_mock.return_value = source_for_add
         result = self.TEST_CLASS.ask_user_for_source(source=source, need_value=need_value)
         count_mock.assert_called_once()
@@ -407,6 +414,7 @@ class TestCarobMachine(MachineClassMixin):
     def test_validate_sources(
         self, expected_result: dict[Literal[1, 2, 3], int], coffee_variant: str, coffee_value: int, water_value: int
     ) -> None:
+        """Test validate sources"""
         self.TEST_CLASS.COFFEE_VALUE = coffee_value
         self.TEST_CLASS.WATER_VALUE = water_value
         drink = self.TEST_CLASS.DRINKS[coffee_variant]
@@ -421,17 +429,20 @@ class TestCapsuleMachine(MachineClassMixin):
 
     @pytest.fixture(name="validate_sources_mock")
     def validate_sources_fixture(self, mocker: MockerFixture) -> MagicMock:
+        """Validate sources fixture"""
         mock = MagicMock()
         mocker.patch("app.classes.machine_classes.CapsuleCoffeeMachine.validate_sources", mock)
         return mock
 
     @pytest.fixture(name="start_brewing_mock")
     def start_brewing_fixture(self, mocker: MockerFixture) -> MagicMock:
+        """Start brewing fixture"""
         mock = MagicMock()
         mocker.patch("app.classes.machine_classes.CapsuleCoffeeMachine.start_brewing", mock)
         return mock
 
     def teardown(self):
+        """Clear values for new test"""
         self.TEST_CLASS.WATER_VALUE = 0
 
     @pytest.mark.parametrize(
@@ -447,6 +458,7 @@ class TestCapsuleMachine(MachineClassMixin):
         source_value: float,
         expected: float,
     ) -> None:
+        """Test add source"""
         self.TEST_CLASS.add_source(source=source, source_value=source_value)
         assert self.TEST_CLASS.WATER_VALUE == expected
 
@@ -466,6 +478,7 @@ class TestCapsuleMachine(MachineClassMixin):
         input_mock: MagicMock,
         source_for_add: str,
     ) -> None:
+        """Test ask user for source correct value"""
         input_mock.return_value = source_for_add
         result = self.TEST_CLASS.ask_user_for_source(source=source, need_value=need_value)
         count_mock.assert_called_once()
@@ -488,6 +501,7 @@ class TestCapsuleMachine(MachineClassMixin):
         source_for_add: str,
         print_mock: MagicMock,
     ) -> None:
+        """Test ask user for source wrong value"""
         input_mock.return_value = source_for_add
         result = self.TEST_CLASS.ask_user_for_source(source=source, need_value=need_value)
         count_mock.assert_called_once()
@@ -496,6 +510,7 @@ class TestCapsuleMachine(MachineClassMixin):
         assert result is None
 
     def test_source_name(self) -> None:
+        """Test source name"""
         test_result = {
             2: "Вода",
         }
@@ -517,6 +532,7 @@ class TestCapsuleMachine(MachineClassMixin):
     def test_validate_sources(
         self, expected_result: dict[Literal[1, 2, 3], int], coffee_variant: str, coffee_value: int
     ) -> None:
+        """Test validate sources"""
         self.TEST_CLASS.WATER_VALUE = coffee_value
         drink = self.TEST_CLASS.DRINKS[coffee_variant]
         test_result = self.TEST_CLASS.validate_sources(drink=drink)
