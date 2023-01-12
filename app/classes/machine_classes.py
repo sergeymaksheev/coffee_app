@@ -1,30 +1,59 @@
 """Coffee machines module."""
+# pylint: disable=invalid-name
+
 import itertools
 from dataclasses import dataclass
-from typing import Literal
+import typing
 
 from app.classes.data_classes import CoffeeTypes, CoffeeDrink
 
 
 class Machine:
-    """General class for all cofeemashines."""
- 
-    def add_source(self, source: Literal[1,2,3], source_value: int) -> None:
-            """Add selected source.
-                1 - COFFEE
-                2 - WATER
-                3 - MILK
-            """
-            if source_value >= 0:
-                if source == 1:
-                    self.COFFEE_VALUE += source_value
-                elif source == 2:
-                    self.WATER_VALUE += source_value
-                elif source == 3:
-                    self.MILK_VALUE += source_value
-    
+    """General class for all coffeemachines."""
 
-    def ask_user_for_source(self, source: Literal[1,2,3], need_value: float) -> float | None:
+    # Container sizes
+    MAX_COFFEE: float = 0.0
+    MAX_WATER: float = 0.0
+    MAX_MILK: float = 0.0
+
+    # Current source values
+    COFFEE_VALUE: float = 0.0
+    WATER_VALUE: float = 0.0
+    MILK_VALUE: float = 0.0
+
+    def __init__(self, drink_class: typing.Type[CoffeeDrink]):  # pylint: disable=unused-argument
+        self.DRINKS: dict[str, typing.Any] = {}
+
+    @property
+    def source_names(self):
+        """Return source names"""
+        return None
+
+    @property
+    def current_sources(self):
+        """Returns current values of source."""
+        return None
+
+    @property
+    def max_sources(self):
+        """Returns max values of source."""
+        return None
+
+    def add_source(self, source: typing.Literal[1, 2, 3], source_value: float) -> None:
+        """Add selected source.
+        1 - COFFEE
+        2 - WATER
+        3 - MILK
+        """
+        if source_value >= 0:
+            if source == 1:
+                self.COFFEE_VALUE += source_value
+            elif source == 2:
+                self.WATER_VALUE += source_value
+            elif source == 3:
+                self.MILK_VALUE += source_value
+
+    def ask_user_for_source(self, source: typing.Literal[1, 2, 3], need_value: float) -> float | None:
         """Ask user for needed value of selected source."""
         print(self.source_names)
         current_source = self.source_names[source]
@@ -33,52 +62,59 @@ class Machine:
         print("Отстаток ресурсов:", self.current_sources)
 
         for _ in itertools.count():
-            source_for_add = input(f"Введите необходимое количество. Минимальное количество {need_value}\n")
+            source_for_add: str = input(f"Введите необходимое количество. Минимальное количество {need_value}\n")
             msg = f"Введено неверное значение ресурса: {current_source}"
-            
+
             if source_for_add.isdigit():
-                source_for_add = float(source_for_add)
-                if source_for_add < need_value:
+                source_float = float(source_for_add)
+                if source_float < need_value:
                     msg = f"Введено недостаточно ресурса {current_source}"
-                elif source_for_add + self.current_sources[source] > self.max_sources[source]:
+                elif source_float + self.current_sources[source] > self.max_sources[source]:
                     msg = f"Введено слишком большое значeние для ресурса {current_source}"
                 else:
-                    return source_for_add
+                    return source_float
             print(msg)
-            
-    def brew(self, coffee_variant:str):
+
+        return None
+
+    def brew(self, coffee_variant: str):
         """Brewing coffee."""
         drink: CoffeeDrink = self.DRINKS[coffee_variant]
-        validation_result: dict[Literal[1,2,3], float] = self.validate_sources(drink=drink)
-        
+        validation_result: dict[typing.Literal[1, 2, 3], float] = self.validate_sources(drink=drink)
+
         for source, result in validation_result.items():
             if result > 0:
-                source_value: int = self.ask_user_for_source(source=source, need_value=result)
+                source_value: typing.Any = self.ask_user_for_source(source=source, need_value=result)
                 self.add_source(source=source, source_value=source_value)
-        
+
         self.start_brewing(coffee_variant, drink)
 
-    def start_brewing(self, *args, **kwargs):
+    def start_brewing(self, coffee_variant: str, drink: CoffeeDrink):
+        """Start brewing coffee"""
         raise NotImplementedError()
 
-    def validate_sources(self,  *args, **kwargs):
+    def validate_sources(self, drink: CoffeeDrink):
+        """Start validate coffee"""
         raise NotImplementedError()
 
 
 @dataclass
 class CarobCoffeeMachine(Machine):
     """Carob coffee machine class."""
+
     # Container sizes
-    MAX_COFFEE: int = 50
-    MAX_WATER: int = 500
-    MAX_MILK: int = 0
+    MAX_COFFEE: float = 50.0
+    MAX_WATER: float = 500.0
+    MAX_MILK: float = 0.0
 
     # Current source values
-    COFFEE_VALUE: int = 0
-    WATER_VALUE: int = 0
-    MILK_VALUE: int = 0
-    
-    def __init__(self, drink_class: CoffeeDrink):
+    COFFEE_VALUE: float = 0.0
+    WATER_VALUE: float = 0.0
+    MILK_VALUE: float = 0.0
+
+    def __init__(self, drink_class: typing.Type[CoffeeDrink]):
+        super().__init__(drink_class=drink_class)
+
         self.DRINKS = {
             CoffeeTypes.ESPRESSO.value: drink_class(milk=0, water=100, coffee=50),
             CoffeeTypes.AMERICANO.value: drink_class(milk=0, water=350, coffee=50),
@@ -87,74 +123,60 @@ class CarobCoffeeMachine(Machine):
         }
 
     @property
-    def current_sources(self)->dict[int: int]:
+    def current_sources(self) -> dict[float, float]:
         """Returns current values of source.
-            1 - COFFEE
-            2 - WATER
+        1 - COFFEE
+        2 - WATER
         """
-        return {
-            1: self.COFFEE_VALUE,
-            2: self.WATER_VALUE
-        }
+        return {1: self.COFFEE_VALUE, 2: self.WATER_VALUE}
 
     @property
-    def max_sources(self) -> dict[int: int]:
+    def max_sources(self) -> dict[float, float]:
         """Returns max values of source.
-            1 - COFFEE
-            2 - WATER
+        1 - COFFEE
+        2 - WATER
         """
-        return {
-            1: self.MAX_COFFEE,
-            2: self.MAX_WATER
-        }
+        return {1: self.MAX_COFFEE, 2: self.MAX_WATER}
 
     @property
     def source_names(self):
-        return {
-            1: 'Кофе',
-            2: 'Вода'
-        }
+        """Return source names"""
+        return {1: "Кофе", 2: "Вода"}
 
-    def validate_sources(self, drink: CoffeeDrink) -> dict[Literal[1,2,3], float]:
+    def validate_sources(self, drink: CoffeeDrink) -> dict[typing.Literal[1, 2, 3], float]:
         """Validate all sources for selected coffee drink."""
         coffee_res = drink.coffee - self.COFFEE_VALUE
         water_res = drink.water - self.WATER_VALUE
 
-        return {
-            1: coffee_res,
-            2: water_res
-        }
-    
+        return {1: coffee_res, 2: water_res}
+
     def start_brewing(self, coffee_variant: str, drink: CoffeeDrink):
         """Start brewing coffee drink."""
-        drinks_names_map = {
-            '1': 'Эспрессо',
-            '2': 'Американо',
-            '3': 'Каппучино',
-            '4': 'Латте'
-        }
+        drinks_names_map = {"1": "Эспрессо", "2": "Американо", "3": "Каппучино", "4": "Латте"}
         print(f"Начинаем варить ваше {drinks_names_map[coffee_variant]}.")
         self.COFFEE_VALUE -= drink.coffee
         self.WATER_VALUE -= drink.water
 
-        print(f'Ваше {drinks_names_map[coffee_variant]} готово! Наслаждайтесь!')
+        print(f"Ваше {drinks_names_map[coffee_variant]} готово! Наслаждайтесь!")
         print("Отстаток ресурсов:", self.current_sources)
-
 
 
 class AutoCoffeeMachine(Machine):
     """Automatic coffee machine class."""
+
     # Container sizes
-    MAX_COFFEE: int = 100
-    MAX_WATER: int = 500
-    MAX_MILK: int = 200
+    MAX_COFFEE: float = 100.0
+    MAX_WATER: float = 500.0
+    MAX_MILK: float = 200.0
 
     # Current source values
-    COFFEE_VALUE: int = 0
-    WATER_VALUE: int = 0
-    MILK_VALUE: int = 0
+    COFFEE_VALUE: float = 0.0
+    WATER_VALUE: float = 0.0
+    MILK_VALUE: float = 0.0
 
-    def __init__(self, drink_class: CoffeeDrink):
+    def __init__(self, drink_class: typing.Type[CoffeeDrink]):
+        super().__init__(drink_class=drink_class)
+
         self.DRINKS = {
             CoffeeTypes.ESPRESSO.value: drink_class(milk=0, water=50, coffee=50),
             CoffeeTypes.AMERICANO.value: drink_class(milk=0, water=250, coffee=50),
@@ -162,86 +184,65 @@ class AutoCoffeeMachine(Machine):
             CoffeeTypes.LATTE.value: drink_class(milk=200, water=50, coffee=50),
         }
 
-
     @property
     def source_names(self):
-        return {
-            1: 'Кофе',
-            2: 'Вода',
-            3: 'Молоко'
-        }
-
+        return {1: "Кофе", 2: "Вода", 3: "Молоко"}
 
     @property
-    def current_sources(self)->dict[int: int]:
+    def current_sources(self) -> dict[float, float]:
         """Returns current values of source.
-            1 - COFFEE
-            2 - WATER
-            3 - MILK
+        1 - COFFEE
+        2 - WATER
+        3 - MILK
         """
-        return {
-            1: self.COFFEE_VALUE,
-            2: self.WATER_VALUE,
-            3: self.MILK_VALUE
-        }
+        return {1: self.COFFEE_VALUE, 2: self.WATER_VALUE, 3: self.MILK_VALUE}
 
     @property
-    def max_sources(self) -> dict[int: int]:
+    def max_sources(self) -> dict[float, float]:
         """Returns max values of source.
-            1 - COFFEE
-            2 - WATER
-            3 - MILK
+        1 - COFFEE
+        2 - WATER
+        3 - MILK
         """
-        return {
-            1: self.MAX_COFFEE,
-            2: self.MAX_WATER,
-            3: self.MAX_MILK
-        }
+        return {1: self.MAX_COFFEE, 2: self.MAX_WATER, 3: self.MAX_MILK}
 
-    def validate_sources(self, drink: CoffeeDrink) -> dict[Literal[1,2,3], int]:
+    def validate_sources(self, drink: CoffeeDrink) -> dict[typing.Literal[1, 2, 3], float]:
         """Validate all sources for selected coffee drink."""
         coffee_res = drink.coffee - self.COFFEE_VALUE
         water_res = drink.water - self.WATER_VALUE
         milk_res = drink.milk - self.MILK_VALUE
 
-        return {
-            1: coffee_res,
-            2: water_res,
-            3: milk_res
-        }
-    
+        return {1: coffee_res, 2: water_res, 3: milk_res}
+
     def start_brewing(self, coffee_variant: str, drink: CoffeeDrink):
         """Start brewing coffee drink."""
-        drinks_names_map = {
-            '1': 'Эспрессо',
-            '2': 'Американо',
-            '3': 'Каппучино',
-            '4': 'Латте'
-        }
+        drinks_names_map = {"1": "Эспрессо", "2": "Американо", "3": "Каппучино", "4": "Латте"}
         print(f"Начинаем варить ваше {drinks_names_map[coffee_variant]}.")
         self.COFFEE_VALUE -= drink.coffee
         self.WATER_VALUE -= drink.water
         self.MILK_VALUE -= drink.milk
 
-        print(f'Ваше {drinks_names_map[coffee_variant]} готово! Наслаждайтесь!')
+        print(f"Ваше {drinks_names_map[coffee_variant]} готово! Наслаждайтесь!")
         print("Отстаток ресурсов:", self.current_sources)
-    
+
 
 @dataclass
 class CapsuleCoffeeMachine(Machine):
     """Capsule coffee machine class."""
 
     # Container sizes
-    MAX_COFFEE: int = 0
-    MAX_WATER: int = 500
-    MAX_MILK: int = 0
+    MAX_COFFEE: float = 0.0
+    MAX_WATER: float = 500.0
+    MAX_MILK: float = 0.0
 
     # Current source values
-    COFFEE_VALUE: int = 0
-    WATER_VALUE: int = 0
-    MILK_VALUE: int = 0
-    
-    def __init__(self, drink_class: CoffeeDrink):
+    COFFEE_VALUE: float = 0.0
+    WATER_VALUE: float = 0.0
+    MILK_VALUE: float = 0.0
+
+    def __init__(self, drink_class: typing.Type[CoffeeDrink]):
+        super().__init__(drink_class=drink_class)
+
         self.DRINKS = {
             CoffeeTypes.ESPRESSO.value: drink_class(milk=0, water=50, coffee=0),
             CoffeeTypes.AMERICANO.value: drink_class(milk=0, water=250, coffee=0),
@@ -251,55 +252,44 @@ class CapsuleCoffeeMachine(Machine):
 
     @property
     def source_names(self):
+        """Return source names"""
         return {
-            2: 'Вода',
+            2: "Вода",
         }
 
-    def add_source(self, source: Literal[1,2,3], source_value: int) -> None:
-            """Add selected source.
-                2 - WATER
-            """
-            if source_value >= 0:
-                if source == 2:
-                    self.WATER_VALUE += source_value
+    def add_source(self, source: typing.Literal[1, 2, 3], source_value: float) -> None:
+        """Add selected source.
+        2 - WATER
+        """
+        if source_value >= 0:
+            if source == 2:
+                self.WATER_VALUE += source_value
 
     @property
-    def current_sources(self)->dict[int: int]:
+    def current_sources(self) -> dict[float, float]:
         """Returns current values of source.
-            2 - WATER
+        2 - WATER
         """
-        return {
-            2: self.WATER_VALUE
-        }
+        return {2: self.WATER_VALUE}
 
     @property
-    def max_sources(self) -> dict[int: int]:
+    def max_sources(self) -> dict[float, float]:
         """Returns max values of source.
-            2 - WATER
+        2 - WATER
         """
-        return {
-            2: self.MAX_WATER
-        }
+        return {2: self.MAX_WATER}
 
-
-    def validate_sources(self, drink: CoffeeDrink) -> dict[Literal[1,2,3], int]:
+    def validate_sources(self, drink: CoffeeDrink) -> dict[typing.Literal[1, 2, 3], float]:
         """Validate all sources for selected coffee drink."""
         water_res = drink.water - self.WATER_VALUE
 
-        return {
-            2: water_res
-        }
-    
+        return {2: water_res}
+
     def start_brewing(self, coffee_variant: str, drink: CoffeeDrink):
         """Start brewing coffee drink."""
-        drinks_names_map = {
-            '1': 'Эспрессо',
-            '2': 'Американо',
-            '3': 'Каппучино',
-            '4': 'Латте'
-        }
+        drinks_names_map = {"1": "Эспрессо", "2": "Американо", "3": "Каппучино", "4": "Латте"}
         print(f"Начинаем варить ваше {drinks_names_map[coffee_variant]}.")
         self.WATER_VALUE -= drink.water
 
-        print(f'Ваше {drinks_names_map[coffee_variant]} готово! Наслаждайтесь!')
+        print(f"Ваше {drinks_names_map[coffee_variant]} готово! Наслаждайтесь!")
         print("Отстаток ресурсов:", self.current_sources)

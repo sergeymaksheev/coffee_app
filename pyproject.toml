@@ -14,7 +14,30 @@ pytest = "^7.2.0"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.20.1"
+mypy = "^0.991"
+pylint = "^2.15.10"
+black = {version = "^23.1a1", allow-prereleases = true}
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 120
+
+[tool.pylint]
+line-length = 120
+
+[tool.isort]
+line-length = 120
+sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']
+no_lines_before = ['STDLIB', 'LOCALFOLDER']
+multi_line_output = 3
+lines_after_imports = 2
+
+
+[tool.mypy]
+files = "."
+follow_import = "skip"
+ignore_missing_imports = true
