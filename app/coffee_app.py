@@ -49,4 +49,5 @@ def start_coffee_app() -> None:
         coffee_machine_classes[machine_type].brew(coffee_variant=coffee_variant)
 
 
-# start_coffee_app()
+if __name__ == "__main__":
+    start_coffee_app()
