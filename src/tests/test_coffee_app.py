@@ -3,15 +3,15 @@ from typing import Type, Union
 from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
-from app.classes.data_classes import CoffeeTypes, CoffeeMachines, CapsuleTypes
-from app.coffee_app import run_dialog, start_coffee_app
+from src.app.classes.data_classes import CoffeeTypes, CoffeeMachines, CapsuleTypes
+from src.app.coffee_app import run_dialog, start_coffee_app
 
 
 @pytest.fixture(name="input_mock")
 def input_fixture(mocker: MockerFixture) -> MagicMock:
     """Imput fixture"""
     mock = MagicMock()
-    mocker.patch("app.coffee_app.input", mock)
+    mocker.patch("src.app.coffee_app.input", mock)
     return mock
 
 
@@ -20,7 +20,7 @@ def print_fixture(mocker: MockerFixture) -> MagicMock:
     """Print fixure"""
 
     mock = MagicMock()
-    mocker.patch("app.coffee_app.print", mock)
+    mocker.patch("src.app.coffee_app.print", mock)
     return mock
 
 
@@ -29,7 +29,7 @@ def count_fixture(mocker: MockerFixture) -> MagicMock:
     """Count fixture"""
 
     mock = MagicMock(return_value=[1])
-    mocker.patch("app.coffee_app.itertools.count", mock)
+    mocker.patch("src.app.coffee_app.itertools.count", mock)
     return mock
 
 
@@ -38,7 +38,7 @@ def run_dialog_fixture(mocker: MockerFixture) -> MagicMock:
     """Run dialog fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.coffee_app.run_dialog", mock)
+    mocker.patch("src.app.coffee_app.run_dialog", mock)
     return mock
 
 
@@ -47,7 +47,7 @@ def capsule_coffee_machine_brew_fixture(mocker: MockerFixture) -> MagicMock:
     """Capsule coffee machine brew fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.CapsuleCoffeeMachine.brew", mock)
+    mocker.patch("src.app.classes.machine_classes.CapsuleCoffeeMachine.brew", mock)
     return mock
 
 
@@ -56,7 +56,7 @@ def auto_coffee_machine_brew_fixture(mocker: MockerFixture) -> MagicMock:
     """Auto coffee machine brew fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.AutoCoffeeMachine.brew", mock)
+    mocker.patch("src.app.classes.machine_classes.AutoCoffeeMachine.brew", mock)
     return mock
 
 
@@ -65,7 +65,7 @@ def carob_coffee_machine_brew_fixture(mocker: MockerFixture) -> MagicMock:
     """Carob coffee machine brew fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.CarobCoffeeMachine.brew", mock)
+    mocker.patch("src.app.classes.machine_classes.CarobCoffeeMachine.brew", mock)
     return mock
 
 

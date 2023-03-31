@@ -8,7 +8,7 @@
             "name": "App",
             "type": "python",
             "request": "launch",
-            "module": "app.coffee_app",
+            "module": "src.app.coffee_app",
             "justMyCode": true
         }
     ]
