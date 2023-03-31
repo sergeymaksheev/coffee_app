@@ -5,8 +5,6 @@ you chose varian of coffee, nessesary resourses and get a result:
 name of your drink. 
 
 
-![Linter status][(https://github.com/sergeymaksheev/coffee_app/actions/workflows/linter.yml/badge.svg)]
-(https://github.com/sergeymaksheev/coffee_app/actions/workflows/linter.yml)
+![Linter status](https://github.com/sergeymaksheev/coffee_app/actions/workflows/linter.yml/badge.svg)
 
-![Pytest status][(https://github.com/sergeymaksheev/coffee_app/actions/workflows/pytest.yml/badge.svg)]
-(https://github.com/sergeymaksheev/coffee_app/actions/workflows/pytest.yml)
+![Pytest status](https://github.com/sergeymaksheev/coffee_app/actions/workflows/pytest.yml/badge.svg)
