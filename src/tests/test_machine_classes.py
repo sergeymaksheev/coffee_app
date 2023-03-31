@@ -3,8 +3,12 @@ from typing import Literal
 from unittest.mock import MagicMock, call
 import pytest
 from pytest_mock import MockerFixture
-from app.classes.data_classes import CoffeeDrink
-from app.classes.machine_classes import AutoCoffeeMachine, CarobCoffeeMachine, CapsuleCoffeeMachine
+from src.app.classes.data_classes import CoffeeDrink
+from src.app.classes.machine_classes import (
+    AutoCoffeeMachine,
+    CarobCoffeeMachine,
+    CapsuleCoffeeMachine,
+)
 
 
 @pytest.fixture(name="count_mock")
@@ -12,7 +16,7 @@ def count_fixture(mocker: MockerFixture) -> MagicMock:
     """Count fixture"""
 
     mock = MagicMock(return_value=[1])
-    mocker.patch("app.classes.machine_classes.itertools.count", mock)
+    mocker.patch("src.app.classes.machine_classes.itertools.count", mock)
     return mock
 
 
@@ -21,7 +25,7 @@ def print_fixture(mocker: MockerFixture) -> MagicMock:
     """Print fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.print", mock)
+    mocker.patch("src.app.classes.machine_classes.print", mock)
     return mock
 
 
@@ -30,7 +34,7 @@ def input_fixture(mocker: MockerFixture) -> MagicMock:
     """Input fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.input", mock)
+    mocker.patch("src.app.classes.machine_classes.input", mock)
     return mock
 
 
@@ -39,7 +43,7 @@ def ask_user_for_source_fixture(mocker: MockerFixture) -> MagicMock:
     """Ask user for source fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.Machine.ask_user_for_source", mock)
+    mocker.patch("src.app.classes.machine_classes.Machine.ask_user_for_source", mock)
     return mock
 
 
@@ -48,7 +52,7 @@ def add_source_fixture(mocker: MockerFixture) -> MagicMock:
     """Add source fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.Machine.add_source", mock)
+    mocker.patch("src.app.classes.machine_classes.Machine.add_source", mock)
     return mock
 
 
@@ -57,7 +61,7 @@ def add_source_capsule_fixture(mocker: MockerFixture) -> MagicMock:
     """Add source capsu;e fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.CapsuleCoffeeMachine.add_source", mock)
+    mocker.patch("src.app.classes.machine_classes.CapsuleCoffeeMachine.add_source", mock)
     return mock
 
 
@@ -171,14 +175,14 @@ class TestAutoMachine(MachineClassMixin):
     def validate_sources_fixture(self, mocker: MockerFixture) -> MagicMock:
         """Validate sources fixture"""
         mock = MagicMock()
-        mocker.patch("app.classes.machine_classes.AutoCoffeeMachine.validate_sources", mock)
+        mocker.patch("src.app.classes.machine_classes.AutoCoffeeMachine.validate_sources", mock)
         return mock
 
     @pytest.fixture(name="start_brewing_mock")
     def start_brewing_fixture(self, mocker: MockerFixture) -> MagicMock:
         """Start brewing fixture"""
         mock = MagicMock()
-        mocker.patch("app.classes.machine_classes.AutoCoffeeMachine.start_brewing", mock)
+        mocker.patch("src.app.classes.machine_classes.AutoCoffeeMachine.start_brewing", mock)
         return mock
 
     def teardown(self):
@@ -303,14 +307,14 @@ class TestCarobMachine(MachineClassMixin):
     def validate_sources_fixture(self, mocker: MockerFixture) -> MagicMock:
         """Validate sources fixture"""
         mock = MagicMock()
-        mocker.patch("app.classes.machine_classes.CarobCoffeeMachine.validate_sources", mock)
+        mocker.patch("src.app.classes.machine_classes.CarobCoffeeMachine.validate_sources", mock)
         return mock
 
     @pytest.fixture(name="start_brewing_mock")
     def start_brewing_fixture(self, mocker: MockerFixture) -> MagicMock:
         """Start brewing fixture"""
         mock = MagicMock()
-        mocker.patch("app.classes.machine_classes.CarobCoffeeMachine.start_brewing", mock)
+        mocker.patch("src.app.classes.machine_classes.CarobCoffeeMachine.start_brewing", mock)
         return mock
 
     def teardown(self):
@@ -431,14 +435,14 @@ class TestCapsuleMachine(MachineClassMixin):
     def validate_sources_fixture(self, mocker: MockerFixture) -> MagicMock:
         """Validate sources fixture"""
         mock = MagicMock()
-        mocker.patch("app.classes.machine_classes.CapsuleCoffeeMachine.validate_sources", mock)
+        mocker.patch("src.app.classes.machine_classes.CapsuleCoffeeMachine.validate_sources", mock)
         return mock
 
     @pytest.fixture(name="start_brewing_mock")
     def start_brewing_fixture(self, mocker: MockerFixture) -> MagicMock:
         """Start brewing fixture"""
         mock = MagicMock()
-        mocker.patch("app.classes.machine_classes.CapsuleCoffeeMachine.start_brewing", mock)
+        mocker.patch("src.app.classes.machine_classes.CapsuleCoffeeMachine.start_brewing", mock)
         return mock
 
     def teardown(self):

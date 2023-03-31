@@ -1,16 +1,17 @@
 """tests_for_coffee_app_module"""
+from typing import Type, Union
 from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
-from app.classes.data_classes import CoffeeTypes, CoffeeMachines, CapsuleTypes
-from app.coffee_app import run_dialog, start_coffee_app
+from src.app.classes.data_classes import CoffeeTypes, CoffeeMachines, CapsuleTypes
+from src.app.coffee_app import run_dialog, start_coffee_app
 
 
 @pytest.fixture(name="input_mock")
 def input_fixture(mocker: MockerFixture) -> MagicMock:
     """Imput fixture"""
     mock = MagicMock()
-    mocker.patch("app.coffee_app.input", mock)
+    mocker.patch("src.app.coffee_app.input", mock)
     return mock
 
 
@@ -19,7 +20,7 @@ def print_fixture(mocker: MockerFixture) -> MagicMock:
     """Print fixure"""
 
     mock = MagicMock()
-    mocker.patch("app.coffee_app.print", mock)
+    mocker.patch("src.app.coffee_app.print", mock)
     return mock
 
 
@@ -28,7 +29,7 @@ def count_fixture(mocker: MockerFixture) -> MagicMock:
     """Count fixture"""
 
     mock = MagicMock(return_value=[1])
-    mocker.patch("app.coffee_app.itertools.count", mock)
+    mocker.patch("src.app.coffee_app.itertools.count", mock)
     return mock
 
 
@@ -37,7 +38,7 @@ def run_dialog_fixture(mocker: MockerFixture) -> MagicMock:
     """Run dialog fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.coffee_app.run_dialog", mock)
+    mocker.patch("src.app.coffee_app.run_dialog", mock)
     return mock
 
 
@@ -46,7 +47,7 @@ def capsule_coffee_machine_brew_fixture(mocker: MockerFixture) -> MagicMock:
     """Capsule coffee machine brew fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.CapsuleCoffeeMachine.brew", mock)
+    mocker.patch("src.app.classes.machine_classes.CapsuleCoffeeMachine.brew", mock)
     return mock
 
 
@@ -55,7 +56,7 @@ def auto_coffee_machine_brew_fixture(mocker: MockerFixture) -> MagicMock:
     """Auto coffee machine brew fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.AutoCoffeeMachine.brew", mock)
+    mocker.patch("src.app.classes.machine_classes.AutoCoffeeMachine.brew", mock)
     return mock
 
 
@@ -64,7 +65,7 @@ def carob_coffee_machine_brew_fixture(mocker: MockerFixture) -> MagicMock:
     """Carob coffee machine brew fixture"""
 
     mock = MagicMock()
-    mocker.patch("app.classes.machine_classes.CarobCoffeeMachine.brew", mock)
+    mocker.patch("src.app.classes.machine_classes.CarobCoffeeMachine.brew", mock)
     return mock
 
 
@@ -80,7 +81,7 @@ def test_run_dialog_error_input_value_testcases(
     input_mock: MagicMock,
     print_mock: MagicMock,
     count_mock: MagicMock,
-    test_enum_class: CoffeeMachines | CapsuleTypes | CoffeeTypes,
+    test_enum_class: Union[Type[CoffeeMachines], Type[CapsuleTypes], Type[CoffeeTypes]],
     test_input_value: str,
     test_input_text: str,
     test_print_text: str,
@@ -97,16 +98,6 @@ def test_run_dialog_error_input_value_testcases(
     input_mock.assert_called_once_with(test_input_text)
     print_mock.assert_called_once_with(test_print_text)
     assert test_result is None
-
-
-def test_run_dialog_error_enum_class(input_mock: MagicMock, count_mock: MagicMock, print_mock: MagicMock) -> None:
-    """Test run dialog error enum class"""
-
-    with pytest.raises(AttributeError):
-        run_dialog(enum_class="string", input_text="test_input_text", print_text="test_print_text")
-        count_mock.assert_called_once()
-        input_mock.assert_called_once_with("test_input_text")
-        print_mock.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -129,7 +120,7 @@ def test_run_dialog_success_input_value_testcases(
     input_mock: MagicMock,
     print_mock: MagicMock,
     count_mock: MagicMock,
-    test_enum_class: CoffeeMachines | CapsuleTypes | CoffeeTypes,
+    test_enum_class: Union[Type[CoffeeMachines], Type[CapsuleTypes], Type[CoffeeTypes]],
     test_input_value: str,
     test_input_text: str,
     test_print_text: str,

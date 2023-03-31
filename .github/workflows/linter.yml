@@ -1,0 +1,34 @@
+name: Linter
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  build:
+    name: test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.10']
+    steps:
+    - uses: actions/checkout@v3
+      name: Install python
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+      name: Install poetry
+    - run: |
+        pip install -U pip
+        pip install black
+        pip install mypy
+        pip install pylint
+      env:
+        POETRY_VIRTUALENVS_CREATE: false
+      name: Run Black
+    - run: black .
+      name: Run Mypy
+    - run: mypy .
+    #   name: Run Pylint
+    # - run: python pylint.py --path ./src

@@ -5,7 +5,7 @@ import itertools
 from dataclasses import dataclass
 import typing
 
-from app.classes.data_classes import CoffeeTypes, CoffeeDrink
+from src.app.classes.data_classes import CoffeeTypes, CoffeeDrink
 
 
 class Machine:
