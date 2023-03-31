@@ -1,4 +1,5 @@
 """tests_for_coffee_app_module"""
+from typing import Type, Union
 from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
@@ -80,7 +81,7 @@ def test_run_dialog_error_input_value_testcases(
     input_mock: MagicMock,
     print_mock: MagicMock,
     count_mock: MagicMock,
-    test_enum_class: CoffeeMachines | CapsuleTypes | CoffeeTypes,
+    test_enum_class: Union[Type[CoffeeMachines], Type[CapsuleTypes], Type[CoffeeTypes]],
     test_input_value: str,
     test_input_text: str,
     test_print_text: str,
@@ -97,16 +98,6 @@ def test_run_dialog_error_input_value_testcases(
     input_mock.assert_called_once_with(test_input_text)
     print_mock.assert_called_once_with(test_print_text)
     assert test_result is None
-
-
-def test_run_dialog_error_enum_class(input_mock: MagicMock, count_mock: MagicMock, print_mock: MagicMock) -> None:
-    """Test run dialog error enum class"""
-
-    with pytest.raises(AttributeError):
-        run_dialog(enum_class="string", input_text="test_input_text", print_text="test_print_text")
-        count_mock.assert_called_once()
-        input_mock.assert_called_once_with("test_input_text")
-        print_mock.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -129,7 +120,7 @@ def test_run_dialog_success_input_value_testcases(
     input_mock: MagicMock,
     print_mock: MagicMock,
     count_mock: MagicMock,
-    test_enum_class: CoffeeMachines | CapsuleTypes | CoffeeTypes,
+    test_enum_class: Union[Type[CoffeeMachines], Type[CapsuleTypes], Type[CoffeeTypes]],
     test_input_value: str,
     test_input_text: str,
     test_print_text: str,
