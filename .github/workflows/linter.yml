@@ -1,4 +1,4 @@
-name: Pytest
+name: Linter
 on:
   push:
     branches: [develop]
@@ -25,6 +25,9 @@ jobs:
         poetry install
       env:
         POETRY_VIRTUALENVS_CREATE: false
-      name: Test with pytest
-    - run: |
-        pytest
+      name: Run Black
+    - run: black .
+      name: Run Mypy
+    - run: mypy .
+      name: Run Pylint
+    - run: pylint .
