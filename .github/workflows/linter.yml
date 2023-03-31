@@ -21,8 +21,9 @@ jobs:
       name: Install poetry
     - run: |
         pip install -U pip
-        pip install poetry
-        poetry install
+        pip install black
+        pip install mypy
+        pip install pylint
       env:
         POETRY_VIRTUALENVS_CREATE: false
       name: Run Black

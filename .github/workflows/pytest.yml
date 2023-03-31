@@ -21,8 +21,7 @@ jobs:
       name: Install poetry
     - run: |
         pip install -U pip
-        pip install poetry
-        poetry install
+        pip install pytest
       env:
         POETRY_VIRTUALENVS_CREATE: false
       name: Test with pytest
