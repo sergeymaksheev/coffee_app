@@ -31,4 +31,4 @@ jobs:
       name: Run Mypy
     - run: mypy .
       name: Run Pylint
-    - run: src/pylint .
+    - run: python pylint.py --path ./src
